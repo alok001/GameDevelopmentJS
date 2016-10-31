@@ -1,0 +1,162 @@
+<!DOCTYPE HTML>
+<html>
+
+		<head>
+				<meta charset="UTF-8">
+				
+				<style type="text/css">
+				.wrapper{
+					width:900px;
+					height:600px;
+					margin:auto;
+					border:1px solid red;
+					position:relative;
+					top:20px;
+				}
+				.hit,.miss,.score,.level,.timeleft
+				{
+					float:left;
+					width: 18%;
+					margin-right:3px;
+					margin-left:5px;
+				}
+				.start_game,.stop_game,.levels
+				{
+					float:left;
+					width:25%;
+					position:relative;
+					top:3px;
+				}
+				.start_game
+				{
+					margin-left:50px;
+				}
+				.score_board{
+				border: 1px solid yellow;
+				width: 89%;
+				height: 50px;
+				top: 9px;
+				position: relative;
+				margin-left: 49px;
+				}
+				.game_shower{
+					width: 89%;
+					top:2px;
+					position: relative;
+					border: 1px solid orange;
+					height:30px;
+					top:40px;
+					margin-left:50px;
+				}
+				canvas{
+				position:relative;
+				left:50px;
+				top:20px;
+				border:1px solid green;
+				
+				}
+					
+				</style>
+				
+				<script type="text/javascript">
+					
+					
+					var canvas;
+					var x,y;
+					var looptime;
+					var circle={"x":30,"y":40,"r":15,"vx":1,"vy":2,"color":"red",				"hitcount":1,"misscount":1};
+								
+					function draw(x1,y1){
+					circle.x=x1;
+					circle.y=y1;
+					
+					 canvas=document.getElementById('canvas');
+						var ctx=canvas.getContext('2d');
+							ctx.save();
+							ctx.clearRect(0,0,800,400);
+							ctx.beginPath();
+						ctx.arc(circle.x,circle.y,circle.r,0,2*Math.PI);
+						ctx.fillStyle=circle.color;
+						ctx.fill();
+						ctx.restore();
+						
+				      // alert(" y " + y + " x " +  x); 
+						if((circle.x+circle.vx+circle.r>800) || ((circle.x-circle.r)+circle.vx<0))
+						{
+							circle.vx=-circle.vx;
+							//alert("in x case x " + x + " vx " +  vx); 
+						}
+						
+						if((circle.y+circle.r+circle.vy<10) || (circle.y-circle.r)+circle.vy>370)
+						{
+							circle.vy=-circle.vy;
+							//alert(" in y case y " + y + " vy " +  vy); 
+						}
+						circle.x=circle.x+circle.vx;
+						circle.y=circle.y+circle.vy;
+						
+						 loopdraw=setTimeout('draw('+circle.x+','+circle.y+')',20);
+						
+						
+					}
+					
+					function GameStart(){
+						draw(circle.x,circle.y);
+						//showTime(30);
+					}
+				
+				
+				
+					
+					
+					
+				</script>
+		</head>
+
+<body onload="">
+		<div class="wrapper" id="out_wrap">
+
+		<div class="score_board" id="scorer">
+			<div class="hit">
+			<span>Hit : </span><span id="hit_value"></span>
+			</div>
+			<div class="miss">
+			<span>Miss : </span><span id="Miss_value"></span>
+			</div>
+			<div class="score">
+				<span>Score : </span><span id="Score_value"></span>
+			</div>
+			<div class="timeleft">
+				<span>Time Left : </span><span class="time_left_value" id="timer">30</span>
+			</div>
+			<div class="level">
+				<span>Level</span><span class="level_value"></span>
+			</div>
+		</div>
+
+		<canvas id="canvas" width="800px" height="400px"></canvas>
+		
+		<div class="game_shower">
+		
+			<div class="start_game"><button type="button" onclick="GameStart()">Start</button></div>
+			<div class="stop_game"><button type="button" onclick="showTime('1')">Stop</button></div>
+			
+			<div class="levels">
+			<button type="button">level 1</button>
+			<button type="button">level 2</button>
+			<button type="button">level 3</button>
+			</div>
+		
+		</div>
+		
+		<script>
+		var canvas=document.getElementById('canvas');
+		canvas.addEventListener("click", function(e){
+			countHit(e)
+		}, false);
+		</script>
+		</div>
+
+</body>
+
+</html>
