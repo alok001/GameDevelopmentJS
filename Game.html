@@ -1,0 +1,282 @@
+<!DOCTYPE HTML>
+<html>
+
+		<head>
+				<meta charset="UTF-8">
+				
+				<style type="text/css">
+				.wrapper{
+					width:900px;
+					height:600px;
+					margin:auto;
+					border:1px solid red;
+					position:relative;
+					top:20px;
+				}
+				.hit,.miss,.score,.level,.timeleft
+				{
+					float:left;
+					width: 18%;
+					margin-right:3px;
+					margin-left:5px;
+				}
+				.start_game,.stop_game,.levels
+				{
+					float:left;
+					width:25%;
+					position:relative;
+					top:3px;
+				}
+				.start_game
+				{
+					margin-left:50px;
+				}
+				.score_board{
+				border: 1px solid yellow;
+				width: 89%;
+				height: 50px;
+				top: 9px;
+				position: relative;
+				margin-left: 49px;
+				}
+				.game_shower{
+					width: 89%;
+					top:2px;
+					position: relative;
+					border: 1px solid orange;
+					height:30px;
+					top:40px;
+					margin-left:50px;
+				}
+				canvas{
+				position:relative;
+				left:50px;
+				top:20px;
+				border:1px solid green;
+				
+				}
+					
+				</style>
+				
+				<script type="text/javascript">
+					
+					vx=1;
+					vy=2;
+					var canvas;
+					var x,y;
+					var loopdraw;
+					var looptime;
+					var hit_count=0,miss_count=0,total_count=0;
+					var pos=0;
+					var circles=[{"x":30,"y":40,"r":15,"vx":1,"vy":2,"color":"red",				"hitcount":1,"misscount":1},
+								 {"x":3,"y":5,"r":25,"vx":2,"vy":4,"color":"green","hitcount":3,"misscount":2},
+								 {"x":20,"y":40,"r":30,"vx":6,"vy":3,"color":"yellow","hitcount":4,"misscount":5},								
+								 {"x":30,"y":70,"r":20,"vx":4,"vy":6,"color":"blue","hitcount":6,"misscount":3}
+								];
+					
+					function draw(x1,y1){
+					
+					x=x1;
+					y=y1;
+					
+					circles[pos].x=x;
+					circles[pos].y=y;
+					
+					 canvas=document.getElementById('canvas');
+						var ctx=canvas.getContext('2d');
+							ctx.save();
+							ctx.clearRect(0,0,800,400);
+							ctx.beginPath();
+						ctx.arc(circles[pos].x,circles[pos].y,circles[pos].r,0,2*Math.PI);
+						ctx.fillStyle=circles[pos].color;
+						ctx.fill();
+						ctx.restore();
+						
+				      // alert(" y " + y + " x " +  x); 
+						if((x+circles[pos].vx+circles[pos].r>800) || ((x-circles[pos].r)+circles[pos].vx<0))
+						{
+							circles[pos].vx=-circles[pos].vx;
+							//alert("in x case x " + x + " vx " +  vx); 
+						}
+						
+						if((y+circles[pos].r+circles[pos].vy<10) || (y-circles[pos].r)+circles[pos].vy>370)
+						{
+							circles[pos].vy=-circles[pos].vy;
+							//alert(" in y case y " + y + " vy " +  vy); 
+						}
+						x=x+circles[pos].vx;
+						y=y+circles[pos].vy;
+						
+						 loopdraw=setTimeout('draw('+x+','+y+')',20);
+						
+						
+					}
+					function writeHit(text)
+					{
+							document.getElementById("hit_value").innerHTML=text;
+					}
+					function writeMiss(text)
+					{
+						document.getElementById("Miss_value").innerHTML=text;
+					}
+					
+				function countHit(e)
+				{
+					
+					var xcore = e.clientX;     // Get the horizontal coordinate
+					var ycore = e.clientY;
+					
+					//alert("count hit  x " + xcore + " y " + ycore);
+					//alert("  x " + x );
+					var left_width= document.getElementById('out_wrap').offsetLeft;
+					var can_left=document.getElementById('canvas').offsetLeft;
+					
+					var top_height=document.getElementById('out_wrap').offsetTop;
+					var can_height=document.getElementById('canvas').offsetTop;
+					
+					
+					var total_left=xcore-(left_width+can_left);
+					var total_height=ycore-(top_height+can_height);
+					
+					//alert(" left " + total_left + " top " + total_height);
+					//alert(" x " + x + " y " + y);
+					//alert(" can_height " + can_height);
+					//alert(" total_height " + total_height + " y  " + y + " ycore " + ycore );
+						//alert("  calc x " +  total_left);
+						var distance=Math.sqrt(Math.pow((total_left-x),2)+Math.pow((total_height-y),2));
+						/*if(total_left>x)
+						{
+							if((total_left-5)<x)
+							{
+								//alert("an hit");
+								hit_count=hit_count+1;
+								writeHit(hit_count);
+							}
+							else
+							{
+								//alert("an miss");
+								miss_count=miss_count+1;
+								writeMiss(miss_count);
+							}
+						}
+						else
+						{
+							if((total_left+5)>x)
+							{
+								//alert("an hit");
+								hit_count=hit_count+1;
+								writeHit(hit_count);
+							}
+							else
+							{
+								//alert("an miss");
+								miss_count=miss_count+1;
+								writeMiss(miss_count);
+							}
+						}
+						*/
+						
+						if(distance<=circles[pos].r)
+						{
+								
+								//alert("x of event " + total_left + "x of ball " + x);
+								//alert("y of event " + total_height + "y of ball " + y);
+								//alert("an hit " + distance);
+								hit_count=circles[pos].hitcount+hit_count;
+								
+								circles[pos].x=-20;
+								circles[pos].y=-20;
+								
+								pos=pos+1;
+								
+								
+								writeHit(hit_count);
+						}
+						else{
+								//alert("x of event " + total_left + "x of ball " + x);
+								//alert("y of event " + total_height + "y of ball " + y);
+								//alert("an miss " + distance);
+								miss_count=miss_count+circles[pos].misscount;
+								writeMiss(miss_count);
+						}
+							//xcor -= document.getElementById('canvas').offsetLeft;
+							//ycor -= document.getElementById('canvas').offsetTop;
+							
+
+				}
+				
+				function GameOver()	{
+				
+					clearTimeout(looptime);
+						clearTimeout(loopdraw);
+						
+				}
+					function GameStart(){
+						draw(circles[pos].x,circles[pos].y);
+						showTime(30);
+					}
+					function showTime(time)	{
+						//alert("here " + time);
+							time=time-1;
+						document.getElementById("timer").innerHTML=time;
+					if(time==0)
+					{
+						GameOver();
+					}
+					else
+					{
+						 looptime=setTimeout('showTime('+time+')',1000);
+					}
+						
+					}
+					
+				</script>
+		</head>
+
+<body onload="">
+		<div class="wrapper" id="out_wrap">
+
+		<div class="score_board" id="scorer">
+			<div class="hit">
+			<span>Hit : </span><span id="hit_value"></span>
+			</div>
+			<div class="miss">
+			<span>Miss : </span><span id="Miss_value"></span>
+			</div>
+			<div class="score">
+				<span>Score : </span><span id="Score_value"></span>
+			</div>
+			<div class="timeleft">
+				<span>Time Left : </span><span class="time_left_value" id="timer">30</span>
+			</div>
+			<div class="level">
+				<span>Level</span><span class="level_value"></span>
+			</div>
+		</div>
+
+		<canvas id="canvas" width="800px" height="400px"></canvas>
+		
+		<div class="game_shower">
+		
+			<div class="start_game"><button type="button" onclick="GameStart()">Start</button></div>
+			<div class="stop_game"><button type="button" onclick="showTime('1')">Stop</button></div>
+			
+			<div class="levels">
+			<button type="button">level 1</button>
+			<button type="button">level 2</button>
+			<button type="button">level 3</button>
+			</div>
+		
+		</div>
+		
+		<script>
+		var canvas=document.getElementById('canvas');
+		canvas.addEventListener("click", function(e){
+			countHit(e)
+		}, false);
+		</script>
+		</div>
+
+</body>
+
+</html>
